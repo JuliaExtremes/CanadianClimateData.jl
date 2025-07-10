@@ -1,0 +1,13 @@
+name = "CanadianClimateData"
+uuid = "4ac68c5e-d36a-4901-8cb5-da7e3d304538"
+authors = ["Gabriel Gobeil", "Jonathan Jalbert"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.6.7"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
