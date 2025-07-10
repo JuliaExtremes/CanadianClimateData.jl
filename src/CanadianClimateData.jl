@@ -1,5 +1,7 @@
 module CanadianClimateData
 
-# Write your package code here.
+using CSV, DataFrames, Downloads, ProgressMeter
+
+include("station.jl")
 
 end

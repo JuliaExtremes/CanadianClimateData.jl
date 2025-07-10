@@ -1,6 +1,9 @@
 using CanadianClimateData
 using Test
 
+using CSV, DataFrames
+
 @testset "CanadianClimateData.jl" begin
-    # Write your tests here.
+    include("station_test.jl")
 end
+
