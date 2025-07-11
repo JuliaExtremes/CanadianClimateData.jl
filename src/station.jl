@@ -135,8 +135,7 @@ function load_station_daily(;Name::String="", ClimateID::String="", StationID::S
     @showprogress for yr in (firstYear+1):lastYear
         full_url = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=$StationID&Year=$yr&Month=1&Day=14&timeframe=2&submit=Download+Data"
         subdata = CSV.read(Downloads.download(full_url), DataFrame, delim=',')
-        append!(data, subdata, promote=true)
-    end
+        append!(data, subdata, promote=true) end
 
     return data
 
@@ -178,8 +177,7 @@ function load_station_hourly(;Name::String="", ClimateID::String="", StationID::
             full_url = "https://climate.weather.gc.ca/climate_data/bulk_data_e.html?format=csv&stationID=$StationID&Year=$yr&Month=$imonth&Day=14&timeframe=1&submit=Download+Data"
             subdata = CSV.read(Downloads.download(full_url), DataFrame, dateformat ="yyyy-mm-dd HH:MM", delim=',', silencewarnings=true)
             append!(data, subdata, promote=true)
-        end
-    end
+        end end
 
     return data
 
