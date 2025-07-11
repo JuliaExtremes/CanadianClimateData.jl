@@ -29,6 +29,9 @@ end
 
 Unzip only the text files contained in the archive.
 
+!!! note "Hourly records"
+    This function works only for Unix and Mac users. For Windows users, the ZIP file should be unzipped externally.
+
 See also: [`idf_zip_download`](@ref)
 """
 function idf_unzip(zip_path::String)
@@ -40,64 +43,47 @@ function idf_unzip(zip_path::String)
     return output_dir
 end
 
+# function idf_inventory(unzipped_folder_path::String)
 
+#     filenames = readdir(unzipped_folder_path)
 
+#     # Extract only the text filesname
+#     filter!(x->endswith(x, ".txt"), filenames)
+#     filter!(x->contains(x, idf_version), filenames)
 
-#     for province in provinces
-#         # Make a temp directory for all data :
-#         try
-#             cd("$(output_dir)/temp_data")
-#         catch
-#             mkdir("$(output_dir)/temp_data")
-#             cd("$(output_dir)/temp_data")
-#         end
+#     @assert !isempty(filenames) "The provided folder $unzipped_folder_path does not contain any IDF text file."
 
-#         file = "$(province).zip"
-
-#         # Download the data (if not downloaded already) and unzip the data :
-#         if file in glob("*", pwd())
-#             run(`unzip $(file) "*.txt"`)   # unzip the data
-#         else
-#             Downloads.download("$(url)$(file)", "$(file)")
-#             try
-#                 run(`unzip $(file) "*.txt"`)   # unzip the data
-#                 cd("$(output_dir)")
-#             catch
-#                 throw(error("Unable to unzip the data file."))
-#             end
-#         end
-
-#         input_d = "$(output_dir)/temp_data/$(province)" # Where raw data are
-#         if split
-#             # Make the output directory if it doesn't exist :
-#             try
-#                 mkdir("$(output_dir)/$(province)")
-#             catch
-#                 nothing
-#             end
-#             output_d = "$(output_dir)/$(province)" # Where the netcdf/csv will be created
-#         else
-#             output_d = "$(output_dir)/"
-#         end
-
-#         # Convert the data in the specified format (CSV or NetCDF) :
-#         if lowercase(format) == "csv"
-#             #txt2csv(input_d, output_d, province)
-#             info_df = vcat(info_df, txt2csv(input_d, output_d, province))
-#         elseif lowercase(format) == "netcdf" || lowercase(format) == "nc"
-#             txt2netcdf(input_d, output_d)
-#         else
-#             throw(error("Format is not valid"))
-#         end
-
-#         # Automatic deletion
-#         if rm_temp
-#             rm("$(output_dir)/temp_data", recursive=true)
-#         end
-#     end
-#     if lowercase(format) == "csv"
-#         output_info = "$(output_dir)/info_stations.csv"
-#         CSV.write(output_info, info_df)
-#     end
-#     return nothing
 # end
+
+
+function read_idf_station_info(idf_txt_file_path::String)
+    @assert isfile(idf_txt_file_path) 
+
+    f = open(idf_txt_file_path, "r")
+        lines = readlines(f)
+    close(f)
+
+    ClimateID = strip(lines[14][60:end])
+    Name = strip(lines[14][1:50])
+
+    stripchar = (s, r) -> replace(s, Regex("[$r]") => "")    # to remove ' from lat/lon
+
+    lat_degree = parse(Int32, stripchar(lines[16][12:14],"'"))
+    lat_minute = parse(Int32, stripchar(lines[16][15:17],"'"))
+
+    lat = round(lat_degree + lat_minute/60, digits=2)
+
+    lon_degree = parse(Int32, stripchar(lines[16][34:37],"'"))
+    if lon_degree ≥ 100
+        lon_minute = parse(Int32, stripchar(lines[16][38:40],"'"))
+    else
+        lon_minute = parse(Int32, stripchar(lines[16][37:39],"'"))
+    end
+
+    lon = - round(lon_degree + lon_minute/60, digits=2)
+
+    elevation = parse(Int32, lines[16][65:69])
+
+    return ClimateID, Name, lat, lon, elevation
+
+end
