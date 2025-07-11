@@ -2,6 +2,7 @@
 
 [![Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Build Status](https://github.com/JuliaExtremes/CanadianClimateData.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/JuliaExtremes/CanadianClimateData.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![codecov](https://codecov.io/gh/JuliaExtremes/CanadianClimateData.jl/branch/main/graph/badge.svg?token=7UGVMF0ENE)](https://codecov.io/gh/JuliaExtremes/CanadianClimateData.jl)
 
 <!-- [![documentation stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliaextremes.github.io/IDFDataCanada.jl/stable/) -->
 <!-- [![documentation latest](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliaextremes.github.io/IDFDataCanada.jl/dev/) -->
