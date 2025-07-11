@@ -1,26 +1,26 @@
-file_version = "idf_v3-30_2022_10_31"
+idf_version = "idf_v3-30_2022_10_31"
 
-repo_url = "https://collaboration.cmc.ec.gc.ca/cmc/climate/Engineer_Climate/IDF/"*file_version*"/IDF_Files_Fichiers/"
+repo_url = "https://collaboration.cmc.ec.gc.ca/cmc/climate/Engineer_Climate/IDF/"*idf_version*"/IDF_Files_Fichiers/"
 
 prov_list = ["AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"]
 
 """
-    idf_zip_download(province::String ; dir::String="..")
+    idf_zip_download(province::String ; dir::String=pwd())
 
 Download the ZIP files of the IDF of the province `province` in `dir`.
 """
 function idf_zip_download(province::String ; dir::String=pwd())
     @assert province ∈ prov_list "The provided province $province is not valid."
 
-    repo_file_name = "$(province).zip"
+    zip_remote_filename = "$(province).zip"
 
-    repo_file_url = joinpath(dirname(@__FILE__), repo_url, repo_file_name)
+    zip_remote_path = string(repo_url, zip_remote_filename)
 
-    zip_path = joinpath(dirname(@__FILE__), dir, repo_file_name)
+    zip_local_path = joinpath(dirname(@__FILE__), dir, zip_remote_filename)
 
-    Downloads.download(repo_file_url, zip_path)
+    Downloads.download(zip_remote_path, zip_local_path)
 
-    return zip_path
+    return zip_local_path
 
 end
 
@@ -36,6 +36,8 @@ function idf_unzip(zip_path::String)
     output_dir = splitext(zip_path)[1]
 
     run(`unzip -j $zip_path '*.txt' -d $output_dir`)
+
+    return output_dir
 end
 
 
