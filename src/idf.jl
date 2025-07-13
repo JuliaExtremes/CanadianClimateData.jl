@@ -43,17 +43,19 @@ function idf_unzip(zip_path::String)
     return output_dir
 end
 
-# function idf_inventory(unzipped_folder_path::String)
+function idf_list(unzipped_folder_path::String)
 
-#     filenames = readdir(unzipped_folder_path)
+    filenames = readdir(unzipped_folder_path)
 
-#     # Extract only the text filesname
-#     filter!(x->endswith(x, ".txt"), filenames)
-#     filter!(x->contains(x, idf_version), filenames)
+    # Extract only the text files
+    filter!(x->endswith(x, ".txt"), filenames)
+    filter!(x->contains(x, idf_version), filenames)
 
-#     @assert !isempty(filenames) "The provided folder $unzipped_folder_path does not contain any IDF text file."
+    @assert !isempty(filenames) "The provided folder $unzipped_folder_path does not contain any IDF text file."
 
-# end
+    return filenames
+
+end
 
 """
     read_idf_station_info(idf_txt_file_path::String)
