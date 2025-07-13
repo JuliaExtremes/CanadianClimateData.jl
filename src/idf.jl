@@ -55,7 +55,20 @@ end
 
 # end
 
+"""
+    read_idf_station_info(idf_txt_file_path::String)
 
+Read the station information from an ECCC-style text file located at `idf_txt_file_path``.
+
+## Details
+
+The function returns a tuple containing in order the station's:
+    - Climate ID
+    - Name
+    - Latitude
+    - Longitude
+    - Elevation 
+"""
 function read_idf_station_info(idf_txt_file_path::String)
     @assert isfile(idf_txt_file_path) 
 
@@ -87,3 +100,43 @@ function read_idf_station_info(idf_txt_file_path::String)
     return ClimateID, Name, lat, lon, elevation
 
 end
+
+"""
+    read_idf_data(idf_txt_file_path::String)
+
+Read the IDF data from an ECCC-style text file located at `idf_txt_file_path``.
+"""
+function read_idf_data(idf_txt_file_path::String)
+    @assert isfile(idf_txt_file_path) 
+
+    f = open(idf_txt_file_path, "r")
+        lines = readlines(f)
+    close(f)
+
+    slines = strip.(lines)
+
+    data_header_line = findfirst(slines .== "Ann\xe9e")
+    data_bottom_line = findfirst(slines .== repeat("-",69))
+
+    n = data_bottom_line - data_header_line - 1
+    M = Matrix{Float64}(undef, n, 10)
+
+    i = 1
+    for line in slines[(data_header_line+1):(data_bottom_line-1)]
+        M[i,:] = parse.(Float64, split(line))
+        i+=1
+    end
+
+    M = replace(M, -99.9 => missing)
+
+    colnames = ["Year","5min","10min","15min","30min","1h","2h","6h","12h","24h"]
+
+    df = DataFrame(M, colnames)
+
+    df.Year = Int64.(df.Year)
+
+    return df
+
+end
+
+

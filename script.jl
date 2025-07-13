@@ -1,5 +1,8 @@
 using CSV, DataFrames, Test
 
+using Pkg
+pkg"activate ."
+
 using CanadianClimateData
 
 zip_path = CanadianClimateData.idf_zip_download("PE", dir=mktempdir())
@@ -40,3 +43,10 @@ df = DataFrame(M, colnames)
 df.Year = Int64.(df.Year)
 
 df
+
+# Those first and last row can change with IDF version published by ECCC. Here are the values of Version idf_v3-30_2022_10_31 for CHARLOTTETOWN A.
+firstrow = [1967., 7.1, 10.9, 12.2, 21.3, 32.0, 51.8, 76.7, 97.5, 100.8]
+lastrow = [2016., 8.3, 10.2, 13.2, 19.0, 19.2, 19.2, 31.1, 46.6, 70.9]
+
+@test all(Vector{Float64}(df[1,:]) .≈ firstrow)
+@test all(Vector{Float64}(df[end,:]) .≈ lastrow)
