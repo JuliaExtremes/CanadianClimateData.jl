@@ -5,32 +5,42 @@ pkg"activate ."
 
 using CanadianClimateData
 
-# Construct the idf_inventory.csv file
+
+# Dowload all idf text files
+
+download_dir = mktempdir()
+extracted_files_dir = joinpath(@__DIR__,"..","Data")
+
+mkdir(extracted_files_dir)
+
+provinces = CanadianClimateData.prov_list
+
+for province in provinces
+    zip_path = CanadianClimateData.idf_zip_download(province, dir=download_dir)
+    folderpath = CanadianClimateData.idf_unzip(zip_path, extracted_files_dir)
+end
+
+
+# Compile the idf inventory
 
 df = DataFrame(
+    Name = String[],
     Province = String[], 
     ClimateID = String[],
-    Name = String[],
     Lat = Float64[],
     Lon = Float64[],
     Elevation = Int64[]
     )
 
+filenames = CanadianClimateData.idf_list(extracted_files_dir)
 
-dir = mktempdir()
-provinces = CanadianClimateData.prov_list
-
-for province in provinces
-    zip_path = CanadianClimateData.idf_zip_download(province, dir=dir)
-    folderpath = CanadianClimateData.idf_unzip(zip_path)
-    filenames = CanadianClimateData.idf_list(folderpath)
-
-    for filename in filenames
-        idf_file_path = joinpath(dirname(@__FILE__), folderpath, filename)
-        ClimateID, Name, Lon, Lat, Elevation = CanadianClimateData.read_idf_station_info(idf_file_path)
-        push!(df, [province, ClimateID, Name, Lat, Lon, Elevation])
-    end
+for filename in filenames
+    idf_file_path = joinpath(dirname(@__FILE__), extracted_files_dir, filename)
+    Name, Province, ClimateID, Lon, Lat, Elevation = CanadianClimateData.read_idf_station_info(idf_file_path)
+    push!(df, [Name, Province, ClimateID, Lon, Lat, Elevation])
 end
+
+
 
 
 

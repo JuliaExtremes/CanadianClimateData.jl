@@ -9,8 +9,12 @@ prov_list = ["AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "
 
 Download the ZIP files of the IDF of the province `province` in `dir`.
 """
-function idf_zip_download(province::String ; dir::String=pwd())
+function idf_zip_download(province::String ; dir::String="")
     @assert province ∈ prov_list "The provided province $province is not valid."
+
+    if isempty(dir)
+        dir = mktempdir()
+    end
 
     zip_remote_filename = "$(province).zip"
 
@@ -34,9 +38,11 @@ Unzip only the text files contained in the archive.
 
 See also: [`idf_zip_download`](@ref)
 """
-function idf_unzip(zip_path::String)
+function idf_unzip(zip_path::String, output_dir::String="")
 
-    output_dir = splitext(zip_path)[1]
+    if isempty(output_dir)
+        output_dir = splitext(zip_path)[1]
+    end
 
     run(`unzip -j $zip_path '*.txt' -d $output_dir`)
 
@@ -65,8 +71,9 @@ Read the station information from an ECCC-style text file located at `idf_txt_fi
 ## Details
 
 The function returns a tuple containing in order the station's:
-    - Climate ID
     - Name
+    - Province
+    - Climate ID
     - Latitude
     - Longitude
     - Elevation 
@@ -78,8 +85,9 @@ function read_idf_station_info(idf_txt_file_path::String)
         lines = readlines(f)
     close(f)
 
-    ClimateID = strip(lines[14][60:end])
     Name = strip(lines[14][1:50])
+    Province = strip(lines[14][55:59])
+    ClimateID = strip(lines[14][60:end])
 
     stripchar = (s, r) -> replace(s, Regex("[$r]") => "")    # to remove ' from lat/lon
 
@@ -99,7 +107,7 @@ function read_idf_station_info(idf_txt_file_path::String)
 
     elevation = parse(Int32, lines[16][65:69])
 
-    return ClimateID, Name, lat, lon, elevation
+    return Name, Province, ClimateID, lat, lon, elevation
 
 end
 

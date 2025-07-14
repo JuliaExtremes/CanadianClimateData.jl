@@ -13,15 +13,22 @@
 
     @testset "idf_unzip" begin
         @test isfile(txt_file_path)
+
+        tmpdir = mktempdir()
+        folderpath = CanadianClimateData.idf_unzip(zip_path, tmpdir)
+        filename = string(CanadianClimateData.idf_version, "_830_PE_8300301_CHARLOTTETOWN_A.txt")
+        txt_file_path = joinpath(dirname(@__FILE__), folderpath, filename)
+
     end
     
     @testset "read_idf_station_info" begin
         res = CanadianClimateData.read_idf_station_info(txt_file_path)
-        @test res[1] == "8300301"
-        @test res[2] == "CHARLOTTETOWN A"
-        @test res[3] ≈ 46.28
-        @test res[4] ≈ -63.12
-        @test res[5] == 48
+        @test res[1] == "CHARLOTTETOWN A"
+        @test res[2] == "PE"
+        @test res[3] == "8300301"
+        @test res[4] ≈ 46.28
+        @test res[5] ≈ -63.12
+        @test res[6] == 48
     end
 
     @testset "read_idf_data" begin
