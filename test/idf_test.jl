@@ -39,4 +39,16 @@
         list = CanadianClimateData.idf_list(folderpath)
         @test filename in list
     end
+
+
+    @testset "filter_idf_inventory" begin
+
+        df = CSV.read("../data/idf_inventory.csv", DataFrame)
+
+        res = CanadianClimateData.filter_idf_inventory(df, Name="WHITEHORSE AUTO")
+        @test res.Name[] == "WHITEHORSE AUTO"
+
+        res = CanadianClimateData.filter_idf_inventory(df, ClimateID="2101310")
+        @test res.ClimateID[]== "2101310"
+    end
 end

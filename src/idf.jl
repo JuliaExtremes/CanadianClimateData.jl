@@ -141,4 +141,24 @@ function read_idf_data(idf_txt_file_path::String)
 
 end
 
+"""
+    filter_idf_inventory(df::DataFrame; Name::String = "", ClimateID::String = "", StationID::String="")
 
+Filter the idf inventory DataFrame `df` by station `Name` and/or `ClimateID`.
+"""
+function filter_idf_inventory(df::DataFrame ; Name::String="", ClimateID::String="", StationID::String="")
+    @assert any([!isempty(Name),!isempty(ClimateID)]) "At least one station characteristic between `Name` and `ClimateID` must be provided."
+
+    idf_df_line = deepcopy(df)
+
+    if !isempty(Name)
+        filter!(row->row.Name == Name, idf_df_line)
+    end
+
+    if !isempty(ClimateID)
+        filter!(row->row."ClimateID" == ClimateID, idf_df_line)
+    end
+
+    return idf_df_line
+
+end
