@@ -40,7 +40,13 @@ for filename in filenames
     push!(df, [Name, Province, ClimateID, Lon, Lat, Elevation])
 end
 
+# Read a idf txt file
 
 
+extracted_files_dir = "/Users/jalbert/Documents/PackageDevelopment.nosync/Data/"
+idf_filename = "idf_v3-30_2022_10_31_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt"
+
+df_file_path = joinpath(dirname(@__FILE__), extracted_files_dir, idf_filename)
 
 
+CanadianClimateData.read_idf_data(df_file_path)

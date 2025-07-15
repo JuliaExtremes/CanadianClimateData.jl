@@ -58,4 +58,28 @@
         res = CanadianClimateData.filter_idf_inventory(df, ClimateID="2101310")
         @test res.ClimateID[]== "2101310"
     end
+
+    @testset "netcdf_generator" begin
+        @test_throws AssertionError CanadianClimateData.netcdf_generator("noextension")
+        filepath = joinpath(@__FILE__, mktempdir(), "test.nc")
+        CanadianClimateData.netcdf_generator(filepath)
+        @test isfile(filepath)
+    end
+
+    @testset "idf2netcdf" begin
+        extracted_files_dir = "Data/IDF/QC"
+        idf_filename = "idf_v3-30_2022_10_31_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt"
+        idf_txt_file_path = joinpath(dirname(@__FILE__), extracted_files_dir, idf_filename)
+        filename, _ = splitext(basename(idf_txt_file_path))
+        
+        # CanadianClimateData.idf2netcdf(idf_txt_file_path)
+        # nc_filepath = joinpath(@__FILE__, pwd(), filename * ".nc")
+        # @test isfile(nc_filepath)
+
+        tmpdir = mktempdir()
+        CanadianClimateData.idf2netcdf(idf_txt_file_path, tmpdir)
+        nc_filepath = joinpath(@__FILE__, tmpdir, filename * ".nc")
+        @test isfile(nc_filepath)
+    end
+
 end
