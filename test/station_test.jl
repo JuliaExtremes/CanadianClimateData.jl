@@ -1,29 +1,25 @@
 
 @testset "station" begin
 
-    filename = CanadianClimateData.download_station_inventory()
+    tmpdir = mktempdir()
 
     @testset "download_station_inventory" begin
-        @test isfile(filename)
-
-        dir = mktempdir()
-        specified_filename = CanadianClimateData.download_station_inventory(dir=dir)
+        specified_filename= CanadianClimateData.download_station_inventory(dir=tmpdir)
         @test isfile(specified_filename)
     end
 
-    df = CanadianClimateData.read_station_inventory(filename)
-
     @testset "read_station_inventory" begin
         @test_throws AssertionError CanadianClimateData.read_station_inventory("nonexistant")
+        df = CanadianClimateData.read_station_inventory("Data/Station/Station Inventory EN.csv")
         @test typeof(df) == DataFrame
     end
 
     @testset "load_station_inventory" begin
-        @test_throws AssertionError CanadianClimateData.read_station_inventory("nonexistant")
-        df = CanadianClimateData.read_station_inventory(filename)
+        df = CanadianClimateData.load_station_inventory(dir=tmpdir)
         @test typeof(df) == DataFrame
     end
 
+    df = CanadianClimateData.read_station_inventory("Data/Station/Station Inventory EN.csv")
 
     @testset "filter_station_inventory" begin
         @test_throws AssertionError CanadianClimateData.filter_station_inventory(df)

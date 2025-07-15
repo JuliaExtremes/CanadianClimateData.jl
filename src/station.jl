@@ -13,11 +13,7 @@ Downloads the ECCC station inventory to the folder specified by `dir` and return
 
 See also: [`load_station_inventory`](@ref), [`read_station_inventory`](@ref).
 """
-function download_station_inventory(; dir::String="")
-   
-    if isempty(dir)
-        dir = mktempdir()
-    end
+function download_station_inventory(; dir::String=pwd())
     
     filename = joinpath(dirname(@__FILE__), dir, string("Station Inventory EN", ".csv"))
         
@@ -30,23 +26,22 @@ function download_station_inventory(; dir::String="")
 end
 
 """
-    load_station_inventory(; dir::String = "")
+    load_station_inventory(; dir::String = pwd())
 
 Downloads the ECCC station inventory to the folder specified by `dir` and reads it as a CSV file.
 
 ## Details
 
-- To download the station inventory to the current directory, use `dir=".."`.
 - If `dir` is not provided, a temporary folder is created for downloading the file.
 
 # Examples
 ```julia-repl
-julia> CanadianClimateData.download_station_inventory(dir="..")
+julia> CanadianClimateData.download_station_inventory()
 ```
 
 See also: [`download_station_inventory`](@ref), [`read_station_inventory`](@ref).
 """
-function load_station_inventory(; dir::String="")
+function load_station_inventory(; dir::String=pwd())
    
     filename = download_station_inventory(dir=dir)
     
@@ -117,7 +112,7 @@ See also: [`load_station_hourly`](@ref)
 function load_station_daily(;Name::String="", ClimateID::String="", StationID::String="")
     @assert any([!isempty(Name),!isempty(ClimateID), !isempty(StationID)]) "At least one station charateristic between `Name`, `ClimateID` and `StationID` must be provided."
 
-    df = load_station_inventory()
+    df = load_station_inventory(dir=mktempdir())
 
     df_line = filter_station_inventory(df, Name = Name, ClimateID = ClimateID, StationID = StationID)
 
@@ -154,7 +149,7 @@ See also: [`load_station_daily`](@ref)
 function load_station_hourly(;Name::String="", ClimateID::String="", StationID::String="")
     @assert any([!isempty(Name),!isempty(ClimateID), !isempty(StationID)]) "At least one station charateristic between `Name`, `ClimateID` and `StationID` must be provided."
 
-    df = load_station_inventory()
+    df = load_station_inventory(dir=mktempdir())
 
     df_line = filter_station_inventory(df, Name = Name, ClimateID = ClimateID, StationID = StationID)
 
