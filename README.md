@@ -28,27 +28,22 @@ julia> using CanadianClimateData
 julia> CanadianClimateData.load_station_inventory()
 ```
 
-To download the file to the current directory, use the following command:
-```julia
-julia> CanadianClimateData.load_station_inventory(dir = "..")
-```
-
 This inventory is useful for identifying station names, station IDs, and climate IDs.
 
 ## Retrieve Daily Records
 
-The following command downloads the daily data for the station with `ClimateID = "51157"` and returns it as a `DataFrame`:
+The following command downloads the daily data for the station with `ClimateID = "702S006"` and returns it as a `DataFrame`:
 
 ```julia
-julia> CanadianClimateData.load_station_daily(ClimateID="51157")
+julia> CanadianClimateData.fetch_daily_records(ClimateID="702S006")
 ```
 
 ## Retrieve Hourly Records
 
-The following command downloads the hourly data for the station with `ClimateID = "51157"` and returns it as a `DataFrame`:
+The following command downloads the hourly data for the station with `ClimateID = "702S006"` and returns it as a `DataFrame`:
 
 ```julia
-julia> CanadianClimateData.load_station_hourly(ClimateID="51157")
+julia> CanadianClimateData.fetch_hourly_records(ClimateID="702S006")
 ```
 
 !!! note "Hourly records"
