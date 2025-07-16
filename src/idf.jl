@@ -38,15 +38,19 @@ Unzip only the text files contained in the archive.
 
 See also: [`idf_zip_download`](@ref)
 """
-function idf_unzip(zip_path::String, output_dir::String="")
+function idf_unzip(zip_path::String, target_dir::String="")
 
-    if isempty(output_dir)
-        output_dir = splitext(zip_path)[1]
+    if isempty(target_dir)
+        target_dir = splitext(zip_path)[1]
     end
 
-    run(`unzip -j $zip_path '*.txt' -d $output_dir`)
+    # Clean the target_dir if it exists before unzipping the file
+    isdir(target_dir) && rm(target_dir; force=true, recursive=true)
+    mkpath(target_dir)
 
-    return output_dir
+    run(`unzip -j $zip_path '*.txt' -d $target_dir`)
+
+    return target_dir
 end
 
 function idf_list(unzipped_folder_path::String)
