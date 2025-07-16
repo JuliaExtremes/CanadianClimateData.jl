@@ -19,7 +19,6 @@ Downloads the ECCC station inventory CSV file to the folder specified by `dir` a
 
 See also: [`load_station_inventory`](@ref), [`read_station_inventory`](@ref).
 """
-
 function download_station_inventory(; dir::String = pwd())
     # Ensure directory exists
     isdir(dir) || mkpath(dir)
@@ -81,7 +80,6 @@ The function also prints the inventory's last updated timestamp, which is assume
 
 See also: [`download_station_inventory`](@ref), [`load_station_inventory`](@ref).
 """
-
 function read_station_inventory(station_inventory_path::String)
     @assert isfile(station_inventory_path) "File does not exist: $station_inventory_path"
     
@@ -189,8 +187,7 @@ function fetch_daily_records(; Name::String = "", ClimateID::String = "", Statio
     # Append subsequent years
     @showprogress for yr in (first_year+1):last_year
         subdata = CSV.read(Downloads.download(record_url(yr)), DataFrame, delim=',')
-        append!(data, subdata; promote = true)
-    end
+        append!(data, subdata; promote = true) end
 
     return data
 end
@@ -218,7 +215,6 @@ Station metadata is retrieved from the ECCC station inventory.
 
 See also: [`fetch_daily_records`](@ref), [`load_station_inventory`](@ref), [`select_station`](@ref).
 """
-
 function fetch_hourly_records(; Name::String = "", ClimateID::String = "", StationID::String="")
     @assert any([!isempty(Name), !isempty(ClimateID), !isempty(StationID)]) "At least one of `Name`, `ClimateID`, or `StationID` must be provided."
 
@@ -249,8 +245,7 @@ function fetch_hourly_records(; Name::String = "", ClimateID::String = "", Stati
             url = record_url(yr, mo)
             subdata = CSV.read(Downloads.download(url), DataFrame; dateformat="yyyy-mm-dd HH:MM", delim=",", silencewarnings=true)
             append!(data, subdata; promote=true)
-        end
-    end
+        end end
 
     return data
 end

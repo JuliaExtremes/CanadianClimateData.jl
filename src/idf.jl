@@ -23,7 +23,6 @@ Downloads the ZIP file containing IDF data for the given Canadian `province` int
 ## Returns
 - The full path to the downloaded ZIP file.
 """
-
 function download_idf_zip(province::String; dir::String = pwd())
     @assert province ∈ prov_list "Invalid province code: '$province'."
 
@@ -41,7 +40,7 @@ end
 
 
 """
-    unzip_idf_txt(zip_path::String, dir::String = pwd())
+    unzip_idf_txt(zip_path::String, dir::String = "")
 
 Unzips only the `.txt` files from the IDF ZIP archive located at `zip_path`. The files are extracted to `dir`.
 
@@ -63,13 +62,15 @@ If `dir` is not provided, it defaults to a folder named after the ZIP file (with
 
 See also: [`download_idf_zip`](@ref)
 """
+function unzip_idf_txt(zip_path::String; dir::String = "")
 
-function unzip_idf_txt(zip_path::String, dir::String = pwd())
-
-    prov_folder, _ = splitext(basename(zip_path))
-
-    target_dir = joinpath(dir, prov_folder)
-
+    if isempty(dir)
+        target_dir, _ = splitext(zip_path)
+    else
+        prov_folder, _ = splitext(basename(zip_path))
+        target_dir = joinpath(dir, prov_folder)
+    end
+    
     # Clear and create target directory
     isdir(target_dir) && rm(target_dir; force = true, recursive = true)
     mkpath(target_dir)
@@ -127,7 +128,6 @@ Filter the IDF station inventory `DataFrame` `df` by matching `Name`, and/or `Cl
 ### Notes
 - At least one of `Name` or `ClimateID` must be provided.
 """
-
 function select_idf_station(df::DataFrame; Name::String = "", ClimateID::String = "")
     @assert any([!isempty(Name), !isempty(ClimateID)]) "At least one of `Name` or `ClimateID` must be provided."
 
@@ -219,7 +219,6 @@ Parses the IDF table from an ECCC-style IDF text file located at `idf_txt_file_p
 ### Notes
 - Assumes the data block is between the line `"Année"` and a dashed line (`"-"` repeated 69 times).
 """
-
 function parse_idf_table(idf_txt_file_path::String)
     @assert isfile(idf_txt_file_path) "File not found: $idf_txt_file_path"
 
