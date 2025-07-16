@@ -41,7 +41,7 @@ end
 
 
 """
-    unzip_idf_txt(zip_path::String, dir::String = pwd())
+    unzip_idf_txt(zip_path::String, dir::String = "")
 
 Unzips only the `.txt` files from the IDF ZIP archive located at `zip_path`. The files are extracted to `dir`.
 
@@ -63,13 +63,15 @@ If `dir` is not provided, it defaults to a folder named after the ZIP file (with
 
 See also: [`download_idf_zip`](@ref)
 """
+function unzip_idf_txt(zip_path::String; dir::String = "")
 
-function unzip_idf_txt(zip_path::String, dir::String = pwd())
-
-    prov_folder, _ = splitext(basename(zip_path))
-
-    target_dir = joinpath(dir, prov_folder)
-
+    if isempty(dir)
+        target_dir, _ = splitext(zip_path)
+    else
+        prov_folder, _ = splitext(basename(zip_path))
+        target_dir = joinpath(dir, prov_folder)
+    end
+    
     # Clear and create target directory
     isdir(target_dir) && rm(target_dir; force = true, recursive = true)
     mkpath(target_dir)

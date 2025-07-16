@@ -32,6 +32,8 @@
 
         df_line = CanadianClimateData.select_station(df, StationID="14")
         @test df_line."Station ID"[] == 14
+
+        @test_throws ErrorException CanadianClimateData.select_station(df, StationID="string")
     end
 
     @testset "fetch_daily_records" begin

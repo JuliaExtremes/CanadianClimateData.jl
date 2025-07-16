@@ -12,7 +12,10 @@
     end
 
     @testset "unzip_idf_txt" begin
-        unzipped_folder_path = CanadianClimateData.unzip_idf_txt("Data/IDF/QC.zip", tmpdir)
+        unzipped_folder_path = CanadianClimateData.unzip_idf_txt("Data/IDF/QC.zip")
+        @test isdir(unzipped_folder_path)
+
+        unzipped_folder_path = CanadianClimateData.unzip_idf_txt("Data/IDF/QC.zip", dir=tmpdir)
         unzipped_file = joinpath(@__FILE__, unzipped_folder_path, idf_filename)
         @test isfile(unzipped_file)
     end
@@ -25,6 +28,9 @@
         @test res[4] ≈ 45.47
         @test res[5] ≈ -73.73
         @test res[6] == 32
+
+        res = CanadianClimateData.read_idf_station_metadata("Data/IDF/YT/idf_v3-30_2022_10_31_210_YT_2100LRP_DAWSON.txt")
+         @test res[5] ≈ -139.13
     end
 
     @testset "parse_idf_table" begin
