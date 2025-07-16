@@ -19,7 +19,6 @@ Downloads the ECCC station inventory CSV file to the folder specified by `dir` a
 
 See also: [`load_station_inventory`](@ref), [`read_station_inventory`](@ref).
 """
-
 function download_station_inventory(; dir::String = pwd())
     # Ensure directory exists
     isdir(dir) || mkpath(dir)
@@ -81,7 +80,6 @@ The function also prints the inventory's last updated timestamp, which is assume
 
 See also: [`download_station_inventory`](@ref), [`load_station_inventory`](@ref).
 """
-
 function read_station_inventory(station_inventory_path::String)
     @assert isfile(station_inventory_path) "File does not exist: $station_inventory_path"
     
@@ -217,7 +215,6 @@ Station metadata is retrieved from the ECCC station inventory.
 
 See also: [`fetch_daily_records`](@ref), [`load_station_inventory`](@ref), [`select_station`](@ref).
 """
-
 function fetch_hourly_records(; Name::String = "", ClimateID::String = "", StationID::String="")
     @assert any([!isempty(Name), !isempty(ClimateID), !isempty(StationID)]) "At least one of `Name`, `ClimateID`, or `StationID` must be provided."
 
