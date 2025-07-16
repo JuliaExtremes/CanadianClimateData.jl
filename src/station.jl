@@ -187,7 +187,7 @@ function fetch_daily_records(; Name::String = "", ClimateID::String = "", Statio
     # Append subsequent years
     @showprogress for yr in (first_year+1):last_year
         subdata = CSV.read(Downloads.download(record_url(yr)), DataFrame, delim=',')
-        append!(data, subdata; promote = true) end
+        append!(data, subdata; cols = :intersect, promote = true) end
 
     return data
 end
@@ -244,7 +244,7 @@ function fetch_hourly_records(; Name::String = "", ClimateID::String = "", Stati
         for mo in 1:12
             url = record_url(yr, mo)
             subdata = CSV.read(Downloads.download(url), DataFrame; dateformat="yyyy-mm-dd HH:MM", delim=",", silencewarnings=true)
-            append!(data, subdata; promote=true)
+            append!(data, subdata; cols = :intersect, promote=true)
         end end
 
     return data
