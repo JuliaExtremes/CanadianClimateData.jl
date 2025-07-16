@@ -6,18 +6,11 @@
 
 Downloads the ECCC station inventory to the folder specified by `dir` and returns its full path.
 
-## Details
-
-- To download the station inventory to the current directory, use `dir=".."`.
-- If `dir` is not provided, a temporary folder is created.
-
 See also: [`load_station_inventory`](@ref), [`read_station_inventory`](@ref).
 """
 function download_station_inventory(; dir::String=pwd())
     
     filename = joinpath(dirname(@__FILE__), dir, string("Station Inventory EN", ".csv"))
-        
-    station_inventory_url = "https://collaboration.cmc.ec.gc.ca/cmc/climate/Get_More_Data_Plus_de_donnees/Station%20Inventory%20EN.csv"
     
     Downloads.download(station_inventory_url, filename)
     
