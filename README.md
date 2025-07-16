@@ -40,7 +40,7 @@ This inventory is useful for identifying station names, station IDs, and climate
 The following command downloads the daily data for the station with `ClimateID = "51157"` and returns it as a `DataFrame`:
 
 ```julia
-julia> CanadianClimateData.load_station_daily(ClimateID="51157")
+julia> CanadianClimateData.fetch_daily_records(ClimateID="51157")
 ```
 
 ## Retrieve Hourly Records
@@ -48,7 +48,7 @@ julia> CanadianClimateData.load_station_daily(ClimateID="51157")
 The following command downloads the hourly data for the station with `ClimateID = "51157"` and returns it as a `DataFrame`:
 
 ```julia
-julia> CanadianClimateData.load_station_hourly(ClimateID="51157")
+julia> CanadianClimateData.fetch_hourly_records(ClimateID="51157")
 ```
 
 !!! note "Hourly records"
