@@ -1,3 +1,6 @@
+# Constants
+
+station_inventory_url = "https://collaboration.cmc.ec.gc.ca/cmc/climate/Get_More_Data_Plus_de_donnees/Station%20Inventory%20EN.csv"
 
 # Station inventory
 
