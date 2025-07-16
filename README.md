@@ -12,7 +12,7 @@ To install the package, run the following command in the Julia REPL:
 
 ```julia
 julia> import Pkg
-julia> Pkg.add(url = "https://github.com/JuliaExtremes/CanadianClimateData.jl", rev = "main")
+julia> Pkg.add("CanadianClimateData.jl")
 ```
 
 ## Station data
