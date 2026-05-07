@@ -1,7 +1,8 @@
 
 # Constants
 
-idf_version = "idf_v3-30_2022_10_31"
+# idf_version = "idf_v3-30_2022_10_31"
+idf_version = "idf_v3-40_2025_12_5"
 
 repo_url = "https://collaboration.cmc.ec.gc.ca/cmc/climate/Engineer_Climate/IDF/"*idf_version*"/IDF_Files_Fichiers/"
 
