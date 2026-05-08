@@ -5,11 +5,33 @@
     idf_filename = "idf_v3-30_2022_10_31_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt"
     idf_txt_file_path = joinpath(dirname(@__FILE__), "Data/IDF/QC", idf_filename)
 
+    # @testset "download_idf_zip" begin
+    #     zip_path = CanadianClimateData.download_idf_zip("PE", dir=tmpdir)
+    #     @test_throws AssertionError CanadianClimateData.download_idf_zip("nonexistant")
+    #     @test isfile(zip_path)
+    # end
+
     @testset "download_idf_zip" begin
-        zip_path = CanadianClimateData.download_idf_zip("PE", dir=tmpdir)
-        @test_throws AssertionError CanadianClimateData.download_idf_zip("nonexistant")
+        import CanadianClimateData.download_idf_zip
+        
+        mktempdir() do dir
+            fake_downloader = function(url, path)
+            write(path, "fake zip content")
+            return path
+        end
+
+        zip_path = download_idf_zip(
+            dir;
+            url="https://example.com/idf.zip",
+            version="test_idf",
+            downloader=fake_downloader,
+        )
+
+        @test zip_path == joinpath(dir, "test_idf.zip")
         @test isfile(zip_path)
+        @test read(zip_path, String) == "fake zip content"
     end
+end
 
     @testset "unzip_idf_txt" begin
         unzipped_folder_path = CanadianClimateData.unzip_idf_txt("Data/IDF/QC.zip")

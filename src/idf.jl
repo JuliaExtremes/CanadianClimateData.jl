@@ -16,9 +16,13 @@ prov_list = ["AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "
         dir::AbstractString=pwd();
         url::AbstractString=repo_url,
         version::AbstractString=idf_version,
+        downloader::Function=Downloads.download,
     ) -> String
 
-Download the ZIP archive containing ECCC IDF data for `version` into `dir`.
+Download the ZIP archive containing ECCC IDF data into `dir`.
+
+The downloaded file is named according to `version`, with a `.zip` extension.
+If `dir` does not exist, it is created.
 
 # Arguments
 
@@ -27,7 +31,11 @@ Download the ZIP archive containing ECCC IDF data for `version` into `dir`.
 # Keywords
 
 - `url::AbstractString=repo_url`: URL of the ZIP archive to download.
-- `version::AbstractString=idf_version`: IDF data version used to name the file.
+- `version::AbstractString=idf_version`: IDF data version used to name the
+  downloaded file.
+- `downloader::Function=Downloads.download`: Function used to download the
+  archive. It must accept two arguments, `url` and `path`, where `path` is the
+  destination file path. This keyword is mainly useful for testing.
 
 # Returns
 
@@ -36,17 +44,41 @@ Download the ZIP archive containing ECCC IDF data for `version` into `dir`.
 # Throws
 
 - `IOError`: If `dir` cannot be created.
-- Any error thrown by `Downloads.download`.
+- Any error thrown by `downloader`.
+
+# Examples
+
+Download the archive using the default URL and version:
+
+```julia
+download_idf_zip("data")
+```
+
+Use a fake downloader in tests to avoid downloading the full archive:
+
+```julia
+fake_downloader = (url, path) -> write(path, "fake zip content")
+
+zip_path = download_idf_zip(
+    tempdir();
+    url="https://example.com/fake.zip",
+    version="idf_test",
+    downloader=fake_downloader,
+)
+```
+
+See also: [`unzip_idf_txt`](@ref)
 """
 function download_idf_zip(
     dir::AbstractString=pwd();
     url::AbstractString=repo_url,
     version::AbstractString=idf_version,
+    downloader::Function=Downloads.download,
 )
     isdir(dir) || mkpath(dir)
 
     zip_path = joinpath(dir, string(version, ".zip"))
-    Downloads.download(url, zip_path)
+    downloader(url, zip_path)
 
     return zip_path
 end
