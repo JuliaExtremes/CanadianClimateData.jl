@@ -1,29 +1,31 @@
-using CanadianClimateData, CSV, DataFrames, Test
+using CSV, DataFrames, Test
+
+using Pkg
+pkg"activate ."
+using CanadianClimateData
 
 # Download all idf text files and compile the IDF inventory
 
-download_dir = mktempdir()
+download_dir = pwd()
+zip_path = CanadianClimateData.download_idf_zip(download_dir)
 
-provinces = CanadianClimateData.prov_list
 
-df = DataFrame(
-    Name = String[],
-    Province = String[], 
-    ClimateID = String[],
-    Lat = Float64[],
-    Lon = Float64[],
-    Elevation = Int64[]
-    )
+    zip_path = "/Users/jalbert/Documents/PackageDevelopment.nosync/CanadianClimateData.jl/idf_v3-40_2025-12-5.zip"
 
-for province in provinces
-    zip_path = CanadianClimateData.download_idf_zip(province, dir=download_dir)
-    folderpath = CanadianClimateData.unzip_idf_txt(zip_path)
+CanadianClimateData.unzip_idf_txt(zip_path)
+CanadianClimateData.list_idf_txt_files("/Users/jalbert/Documents/PackageDevelopment.nosync/CanadianClimateData.jl/idf_v3-40_2025-12-5")
 
-    filenames = CanadianClimateData.list_idf_txt_files(folderpath)
-    
-    for filename in filenames
-        idf_file_path = joinpath(dirname(@__FILE__), extracted_files_dir, filename)
-        Name, Province, ClimateID, Lon, Lat, Elevation = CanadianClimateData.read_idf_station_metadata(idf_file_path)
-        push!(df, [Name, Province, ClimateID, Lon, Lat, Elevation])
-    end
-end
+
+
+
+
+
+idf_txt_file_path = "/Users/jalbert/Documents/PackageDevelopment.nosync/CanadianClimateData.jl/idf_v3-40_2025-12-5/idf_v3-40_2025_12_5_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt"
+metadata = CanadianClimateData.read_idf_station_metadata(idf_txt_file_path)
+
+df = CanadianClimateData.parse_idf_table(idf_txt_file_path)
+
+
+CanadianClimateData.create_idf_netcdf("test.nc")
+
+CanadianClimateData.convert_idf_to_netcdf(idf_txt_file_path)
