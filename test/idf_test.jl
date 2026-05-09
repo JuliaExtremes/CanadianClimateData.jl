@@ -2,18 +2,12 @@
 
     tmpdir = mktempdir()
 
-    idf_filename = "idf_v3-30_2022_10_31_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt"
-    idf_txt_file_path = joinpath(dirname(@__FILE__), "Data/IDF/QC", idf_filename)
-
-    # @testset "download_idf_zip" begin
-    #     zip_path = CanadianClimateData.download_idf_zip("PE", dir=tmpdir)
-    #     @test_throws AssertionError CanadianClimateData.download_idf_zip("nonexistant")
-    #     @test isfile(zip_path)
-    # end
+    idf_filename = "idf_v3-40_2025_12_5_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt"
+    idf_txt_file_path = joinpath(dirname(@__FILE__), "Data/IDF", idf_filename)
 
     @testset "download_idf_zip" begin
         import CanadianClimateData.download_idf_zip
-        
+
         mktempdir() do dir
             fake_downloader = function(url, path)
             write(path, "fake zip content")
@@ -33,14 +27,32 @@
     end
 end
 
-    @testset "unzip_idf_txt" begin
-        unzipped_folder_path = CanadianClimateData.unzip_idf_txt("Data/IDF/QC.zip")
-        @test isdir(unzipped_folder_path)
+@testset "unzip_idf_txt" begin
+    
+    import CanadianClimateData.unzip_idf_txt
+    
+    zip_path = joinpath(@__DIR__, "Data", "IDF",  "idf_v3-40_2025-12-5.zip")
 
-        unzipped_folder_path = CanadianClimateData.unzip_idf_txt("Data/IDF/QC.zip", dir=tmpdir)
-        unzipped_file = joinpath(@__FILE__, unzipped_folder_path, idf_filename)
-        @test isfile(unzipped_file)
+
+    mktempdir() do target_dir
+        unzipped_dir = unzip_idf_txt(
+            zip_path;
+            target_dir=target_dir,
+            provinces=["QC", "YT"],
+        )
+
+        @test unzipped_dir == target_dir
+        @test isdir(unzipped_dir)
+
+        txt_files = filter(file -> endswith(file, ".txt"), readdir(unzipped_dir))
+
+        @test !isempty(txt_files)
+        @test "idf_v3-40_2025_12_5_210_YT_2100LRP_DAWSON.txt" ∈ txt_files
+        @test "idf_v3-40_2025_12_5_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt" ∈ txt_files
+        @test !isfile(joinpath(unzipped_dir, "QC.zip"))
+        @test !isfile(joinpath(unzipped_dir, "YT.zip"))
     end
+end
     
     @testset "read_idf_station_metadata" begin
         res = CanadianClimateData.read_idf_station_metadata(idf_txt_file_path)
@@ -51,12 +63,12 @@ end
         @test res[5] ≈ -73.73
         @test res[6] == 32
 
-        res = CanadianClimateData.read_idf_station_metadata("Data/IDF/YT/idf_v3-30_2022_10_31_210_YT_2100LRP_DAWSON.txt")
-         @test res[5] ≈ -139.13
+        res = CanadianClimateData.read_idf_station_metadata("Data/IDF/idf_v3-40_2025_12_5_210_YT_2100LRP_DAWSON.txt")
+         @test res[5] ≈ -139.12 atol 1e-2
     end
 
     @testset "parse_idf_table" begin
-        # Those first and last row can change with IDF version published by ECCC. Here are the values of Version idf_v3-30_2022_10_31 for MONTREAL PIERRE ELLIOTT TRUDEAU INTL.
+        # Those first and last row can change with IDF version published by ECCC. Here are the values of Version idf_v3-40_2025_12_5 for MONTREAL PIERRE ELLIOTT TRUDEAU INTL.
         firstrow = [1943., 11.7,14.2, 17.8, 20.8, 23.6, 26.7, 33.5, 48.3, 64.3]
         lastrow = [2021., 9.4, 13.2, 14.2, 15.8, 16.0, 16.4, 29.8, 31.0, 45.6]
         
