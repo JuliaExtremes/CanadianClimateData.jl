@@ -51,30 +51,40 @@ julia> CanadianClimateData.fetch_hourly_records(ClimateID="702S006")
 
 ### Download the ZIP IDF files of a province
 
-The following command downloads the IDF ZIP file for the province "QC" into the working directory and returns the local path of the archive:
+The following command downloads the IDF ZIP file into the working directory and returns the local path of the archive:
 
 ```julia
-julia> zip_path = CanadianClimateData.download_idf_zip("QC")
+julia> zip_path = CanadianClimateData.download_idf_zip()
 ```
 
 ### Unzip the ZIP IDF files on Unix-based systems (Linux/macOS)
 
-The following command unzips the `.txt` files contained in the archive and returns the path of the unzipped folder:
+The following command extracts the `.txt` files contained in the IDF archive and
+returns the path to the folder containing the extracted files:
 
 ```julia
 julia> unzipped_folder_path = CanadianClimateData.unzip_idf_txt(zip_path)
 ```
 
-For Windows user, the archive should be unzipped externally.
+On Windows, the archive should be extracted manually. All `.txt` files from the different provincial archives should then be placed in a single folder for the remaining functions to work properly.
 
 ### Read the IDF text file
 
-The following commands read the text file for the station `MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL` and return a `DataFrame`:
+The following commands read the IDF text file for the station `MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL`.
 
+To extract the station metadata:
+
+For extracting the metadata of the IDF curves:
 ```julia
-julia> filename = joinpath(unzipped_folder_path, "idf_v3-30_2022_10_31_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt")
+julia> filename = joinpath(unzipped_folder_path, "idf_v3-40_2025_12_5_702_QC_702S006_MONTREAL_PIERRE_ELLIOTT_TRUDEAU_INTL.txt")
+julia> metadata = CanadianClimateData.read_idf_station_metadata(filename)
+```
+
+For extracting the yearly maxima:
+```julia
 julia> df = CanadianClimateData.parse_idf_table(filename)
 ```
+
 
 ### Convert the text file to a NetCDF file
 
