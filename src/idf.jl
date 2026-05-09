@@ -1,7 +1,6 @@
 
 # Constants
 
-# idf_version = "idf_v3-30_2022_10_31"
 idf_version = "idf_v3-40_2025-12-5"
 
 repo_url = "https://collaboration.cmc.ec.gc.ca/cmc/climate/Engineer_Climate/IDF/"*idf_version*".zip"
@@ -199,24 +198,24 @@ function list_idf_txt_files(unzipped_folder_path::AbstractString)
 end
 
 """
-    select_idf_station(df::DataFrame; Name::String = "", ClimateID::String = "")
+    select_idf_station(df::DataFrame; Name::String = "", ID::String = "")
 
-Filter the IDF station inventory `DataFrame` `df` by matching `Name`, and/or `ClimateID`.
+Filter the IDF station inventory `DataFrame` `df` by matching `Name`, and/or `ID`.
 
 ## Details
 
 ###Arguments
 - `Name`: Station name (exact match).
-- `ClimateID`: Climate ID code (exact match).
+- `ID`: code (exact match).
 
 ### Returns
 - A filtered `DataFrame` containing rows that match the provided criteria.
 
 ### Notes
-- At least one of `Name` or `ClimateID` must be provided.
+- At least one of `Name` or `ID` must be provided.
 """
-function select_idf_station(df::DataFrame; Name::String = "", ClimateID::String = "")
-    @assert any([!isempty(Name), !isempty(ClimateID)]) "At least one of `Name` or `ClimateID` must be provided."
+function select_idf_station(df::DataFrame; Name::String = "", ID::String = "")
+    @assert any([!isempty(Name), !isempty(ID)]) "At least one of `Name` or `ID` must be provided."
 
     result = deepcopy(df)
 
@@ -224,8 +223,8 @@ function select_idf_station(df::DataFrame; Name::String = "", ClimateID::String 
         filter!(row -> row.Name == Name, result)
     end
 
-    if !isempty(ClimateID)
-        filter!(row -> row.ClimateID == ClimateID, result)
+    if !isempty(ID)
+        filter!(row -> row.ID == ID, result)
     end
 
     return result

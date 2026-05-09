@@ -64,13 +64,13 @@ end
         @test res[6] == 32
 
         res = CanadianClimateData.read_idf_station_metadata("Data/IDF/idf_v3-40_2025_12_5_210_YT_2100LRP_DAWSON.txt")
-         @test res[5] ≈ -139.12 atol 1e-2
+        @test res[5] ≈ -139.12 atol=1e-2
     end
 
     @testset "parse_idf_table" begin
         # Those first and last row can change with IDF version published by ECCC. Here are the values of Version idf_v3-40_2025_12_5 for MONTREAL PIERRE ELLIOTT TRUDEAU INTL.
         firstrow = [1943., 11.7,14.2, 17.8, 20.8, 23.6, 26.7, 33.5, 48.3, 64.3]
-        lastrow = [2021., 9.4, 13.2, 14.2, 15.8, 16.0, 16.4, 29.8, 31.0, 45.6]
+        lastrow = [2024., 8.4, 14.2, 17.0, 24.2, 32.4, 49.6, 70.8, 80.4, 138.2]
         
         df = CanadianClimateData.parse_idf_table(idf_txt_file_path)
 
@@ -79,24 +79,24 @@ end
     end
 
     @testset "list_idf_txt_files" begin
-        list = CanadianClimateData.list_idf_txt_files("Data/IDF/QC")
+        list = CanadianClimateData.list_idf_txt_files("Data/IDF")
         @test  idf_filename in list
     end
 
 
     @testset "select_idf_station" begin
 
-        df = CSV.read("../data/idf_inventory.csv", DataFrame)
+        df = CSV.read("../data/idf_v-3.40_2025_12_5_log_included.csv", DataFrame)
 
         res = CanadianClimateData.select_idf_station(df, Name="WHITEHORSE AUTO")
         @test res.Name[] == "WHITEHORSE AUTO"
 
-        res = CanadianClimateData.select_idf_station(df, ClimateID="2101310")
-        @test res.ClimateID[]== "2101310"
+        res = CanadianClimateData.select_idf_station(df, ID="2101310")
+        @test res.ID[]== "2101310"
     end
 
     @testset "create_idf_netcdf" begin
-        @test_throws AssertionError CanadianClimateData.create_idf_netcdf("noextension")
+        @test_throws ArgumentError CanadianClimateData.create_idf_netcdf("noextension")
         filepath = joinpath(@__FILE__, mktempdir(), "test.nc")
         CanadianClimateData.create_idf_netcdf(filepath)
         @test isfile(filepath)
